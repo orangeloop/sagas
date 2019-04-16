@@ -1,9 +1,9 @@
 ﻿using OrangeLoop.Sagas.Interfaces;
 using System.Data;
 
-namespace OrangeLoop.Sagas
+namespace OrangeLoop.Sagas.Config
 {
-    public class DefaultConfig : IUnitOfWorkConfig
+    public class ReadUncommittedConfig : IUnitOfWorkConfig
     {
         public IsolationLevel IsolationLevel => IsolationLevel.ReadUncommitted;
     }

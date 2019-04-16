@@ -4,15 +4,15 @@ using System.Data;
 
 namespace OrangeLoop.Sagas
 {
-    public class DatabaseUnitOfWorkFactory<T> : IUnitOfWorkFactory where T : IDbConnection, new()
+    public class DatabaseUnitOfWorkFactory<T, K> : IUnitOfWorkFactory where T : IDbConnection, new() where K : IUnitOfWorkConfig, new()
     {
         private readonly string _connectionString;
         private readonly IUnitOfWorkConfig _config;
 
-        public DatabaseUnitOfWorkFactory(IConnectionStringFactory connectionStringFactory, IUnitOfWorkConfig config)
+        public DatabaseUnitOfWorkFactory(IConnectionStringFactory connectionStringFactory)
         {
             _connectionString = connectionStringFactory.Get();
-            _config = config;
+            _config = new K();
         }
 
         public IUnitOfWork Create()
