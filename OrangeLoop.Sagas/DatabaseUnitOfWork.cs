@@ -20,7 +20,7 @@ namespace OrangeLoop.Sagas
                 Transaction.Commit();
                 Transaction.Connection?.Close();
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Transaction.Rollback();
                 throw;

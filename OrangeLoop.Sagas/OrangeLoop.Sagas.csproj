@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Jared L. Stark</Authors>
+    <Company>Orange Loop, LLC</Company>
+    <Copyright>Copyright © 2019 Orange Loop, LLC</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/orangeloop/sagas/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/orangeloop/sagas</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/orangeloop/sagas</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>C#, ASP.NET Core, Sagas, Microservices,</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>A simple C# implementation of the Unit of Work pattern for use with IDbConnection, as well a Saga implementation for orchestrating transactions across domains.</Description>
   </PropertyGroup>
 
   <ItemGroup>
