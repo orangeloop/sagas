@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrangeLoop.Sagas", "OrangeLoop.Sagas\OrangeLoop.Sagas.csproj", "{6CE73085-FCC6-4379-9E49-DD6EB4AC0BA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD1744DA-1B55-4A0E-8950-DF9AD0668DF1}"
 	ProjectSection(SolutionItems) = preProject
+		logo512x512.png = logo512x512.png
 		README.md = README.md
 	EndProjectSection
 EndProject
