@@ -17,9 +17,9 @@ we need to update the status of the payment and the order in the database.  This
 involve our `PaymentsRepository` and our `OrdersRepository`, and must fail or succeed together.  If an exception occurs while updating
 the order status in the database, we would need to rollback any changes we made to the payment status as well.
 
-In this example, we assume our business process executes in the same process (e.g. Web Request), and that the operations which must all 
+In this example, we assume our business process executes in the same application domain (e.g. Web Request), and that the operations which must all 
 succeed or fail together involve the database.  The traditional way to handle this is to wrap our queries in an `IDbTransaction`, and 
-rollback the transaction if there is an exception.  The challenge with using the `IDbTransaction` directly is that our Order related
+rollback the transaction if there's an exception.  The challenge with using the `IDbTransaction` directly is that our Order related
 query and our Payment related query must be grouped together.  This doesn't work when using the Repository Pattern, and injecting repositories
 into our services.
 
@@ -27,9 +27,9 @@ The **Unit of Work** pattern creates an abstraction of an IDbTransaction, and al
 in our Repositories.
 
 What about cross-domain business processes?  If we have an `Orders` microservice, and a `Payments` microservice, we must
-make a call to each in order to update the `Order` and `Payment` statuses. The queries for each service are executing
-in separate processes, and using an `IDbTransaction` is no longer an option. **Sagas** to the rescue.  A **Saga** defines a set of steps that
-must all succeed or fail together, and allows us to explicitly define the rollback process for each step.
+make a call to each in order to update the `Order` and `Payment` statuses. The queries for each service execute 
+in separate processes, and using an `IDbTransaction` is simply not an option. **Sagas** to the rescue.  A **Saga** defines a set of steps that
+must all succeed or fail together, and allows us to explicitly define the rollback procedure for each step.
 
 Let's take a closer look at each of these scenarios, starting with a Unit of Work.
 
@@ -119,7 +119,7 @@ We now have everything we need to create a `DatabaseUnitOfWorkFactory`.
     }
 ```
 
-Notice that in the example, we repeat the same try/catch pattern as before.  This isn't very DRY, and pretty soon our code will
+Notice that in the example, we repeat the same try/catch pattern as before.  This isn't very DRY, and pretty soon our code would 
 be littered with try/catch blocks. We can use the `DatabaseTask` class to avoid repeating ourselves.
 
 ```CSharp
@@ -137,7 +137,7 @@ be littered with try/catch blocks. We can use the `DatabaseTask` class to avoid 
 
 #### Dependency Injection
 
-Normally you'll want to plug all this into your DI framework so you can simply inject them into your services.
+Normally you'll want to plug all this into your DI framework so you can simply inject an `IDatabaseTask` or an `IUnitOfWorkFactory` into your services.
 
 ```CSharp
     var services = new ServiceCollection()
@@ -149,7 +149,7 @@ Normally you'll want to plug all this into your DI framework so you can simply i
 
 #### Example
 
-Let's look at an example of how we might use this to implement the scenario of updating both the payment status and the order status. (This
+Let's look at an example of how we could implement the scenario of updating both the payment status and the order status. (This
 example is using [Dapper](https://github.com/StackExchange/Dapper))
 
 ```CSharp
@@ -202,7 +202,7 @@ example is using [Dapper](https://github.com/StackExchange/Dapper))
     // OrderPaymentService.cs
     public class OrderPaymentService : IOrderPaymentService
     {
-        private IDatabaseTask _databaseTask;
+        private readonly IDatabaseTask _databaseTask;
         private readonly IOrdersRepository _ordersRepository;
         private readonly IPaymentsRepository _paymentsRepository;
 
@@ -237,9 +237,7 @@ the steps of a Saga can cross application domains.  A prime example of this is m
 To create a saga, we derive from the abstract base class `Saga<T>`, where `T` is a user defined class to provide context to
 each step of the Saga.
 
-We add steps to the Saga with the _Configure_, typically in the constructor.
-
-Let's look at an example.
+We add steps to the Saga with the _Configure_ method, typically in the constructor.
 
 ```CSharp
     public class CompleteOrderContext
@@ -314,9 +312,9 @@ Let's look at an example.
 
 #### Combining Sagas and UnitOfWork
 
-Sometimes we have a combination of steps that run in the same application domain and across application domains.  If this
-is the case, we can derive from the `UnitOfWorkSaga<T>` class rather than the `Saga<T>` class. The steps of a `UnitOfWorkSaga`
-receive the `IUnitOfWork` instance as the second parameter.
+Sometimes we have a combination of steps that run in the same application domain and across application domains.  In this
+case, we can derive from `UnitOfWorkSaga<T>` rather than `Saga<T>`. The steps of a `UnitOfWorkSaga`
+receive an instance of `IUnitOfWork` as the second parameter.
 
 ```CSharp
 
@@ -329,10 +327,11 @@ receive the `IUnitOfWork` instance as the second parameter.
     // ...
 ```
 
-In addition to the rollback method begin invoked for each step, the `IUnitOfWork` will be rolled back for the entire saga, in
+In addition to the rollback method being invoked for each step, the `IUnitOfWork` will be rolled back for the entire saga, in
 the case of an exception.
 
 #### Known Limitations of Sagas
 
 * If a rollback step also throws an exception, execution of the saga stops and the exception is thrown.  This could leave things
-in an inconsistent state.  You should implement logging or another mechanism to handle this scenario.
+in an inconsistent state.  You should implement logging or another mechanism to handle this scenario. Note, however, that in the case
+of a `UnitOfWorkSaga`, the `IDbTransaction` will be _always_ be rolled back.
