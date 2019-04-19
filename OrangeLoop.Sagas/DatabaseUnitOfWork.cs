@@ -8,17 +8,19 @@ namespace OrangeLoop.Sagas
     {
         public DatabaseUnitOfWork(IDbConnection connection, IUnitOfWorkConfig config)
         {
+            Connection = connection;
             Transaction = connection.BeginTransaction(config.IsolationLevel);
         }
 
         public IDbTransaction Transaction { get; private set; }
+        private IDbConnection Connection { get; set; }
 
         public void Commit()
         {
             try
             {
                 Transaction.Commit();
-                Transaction.Connection?.Close();
+                Connection?.Close();
             }
             catch(Exception)
             {
@@ -28,7 +30,7 @@ namespace OrangeLoop.Sagas
             finally
             {
                 Transaction?.Dispose();
-                Transaction?.Connection?.Dispose();
+                Connection?.Dispose();
                 Transaction = null;
             }
         }
@@ -38,7 +40,7 @@ namespace OrangeLoop.Sagas
             try
             {
                 Transaction.Rollback();
-                Transaction.Connection?.Close();
+                Connection?.Close();
             }
             catch
             {
@@ -47,14 +49,14 @@ namespace OrangeLoop.Sagas
             finally
             {
                 Transaction?.Dispose();
-                Transaction?.Connection?.Dispose();
+                Connection?.Dispose();
                 Transaction = null;
             }
         }
 
         public void Dispose()
         {
-            if (Transaction?.Connection?.State == System.Data.ConnectionState.Open)
+            if (Connection?.State == System.Data.ConnectionState.Open)
             {
                 Rollback();
             }

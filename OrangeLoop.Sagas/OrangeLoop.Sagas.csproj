@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/orangeloop/sagas</PackageProjectUrl>
     <RepositoryUrl>https://github.com/orangeloop/sagas</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>C#, ASP.NET Core, Sagas, Microservices,</PackageTags>
+    <PackageTags>C#, ASP.NET Core, .NET Core, Sagas, Microservices, UnitOfWork, Unit of Work</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>A simple C# implementation of the Unit of Work pattern for use with IDbConnection, as well a Saga implementation for orchestrating transactions across domains.</Description>
     <Version>1.0.0</Version>
