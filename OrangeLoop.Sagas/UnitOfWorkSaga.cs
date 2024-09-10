@@ -1,38 +1,18 @@
 ﻿using OrangeLoop.Sagas.Interfaces;
-using System;
+using OrangeLoop.Sagas.Interfaces.Models;
 using System.Threading.Tasks;
 
 namespace OrangeLoop.Sagas
 {
-    public abstract class UnitOfWorkSaga<T> : BaseSaga<UnitOfWorkStepMethod<T>, T>
+    public class UnitOfWorkSaga<T>(IUnitOfWork unitOfWork) : Saga<T> where T : class
     {
-        private readonly IUnitOfWorkFactory _unitOfWorkFactory;
-
-        public UnitOfWorkSaga(IUnitOfWorkFactory unitOfWorkFactory) : base(new UnitOfWorkSagaConfiguration<T>())
-        {
-            _unitOfWorkFactory = unitOfWorkFactory;
-        }
-
-        public override async Task<T> Run(T context)
-        {
-            using (var unitOfWork = _unitOfWorkFactory.Create())
+        public override Task<ExecutionResult<T>> Run(T context)
+            => unitOfWork.ExecuteAsync<T>(async () =>
             {
-                try
-                {
-                    context = await base.Run(context, (func, ctx) => {
-                        return func.Invoke(ctx, unitOfWork);
-                    });
-
-                    unitOfWork.Commit();
-
-                    return context;
-                }
-                catch (Exception)
-                {
-                    unitOfWork.Rollback();
-                    throw;
-                }
-            }
-        }
+                var result = await base.Run(context);
+                return result.Success
+                    ? result.Value
+                    : throw result.Error;
+            });
     }
 }

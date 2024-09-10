@@ -1,22 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿using OrangeLoop.Sagas.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace OrangeLoop.Sagas
 {
-    public delegate Task<T> StepMethod<T>(T context);
-
-    public class SagaStep<T> : BaseSagaStep<StepMethod<T>>
+    public class SagaStep<T> : ISagaStep<T> where T : class
     {
-        public SagaStep() : base() { }
-        public SagaStep(StepMethod<T> executeMethod, StepMethod<T> rollbackMethod) : base(executeMethod, rollbackMethod) { }
+        public Func<T, Func<T, Task>, Func<T, Exception, Task>, Task> Execute { get; private set; }
+        public Func<T, Func<T, Task>, Func<T, Exception, Task>, Task> Rollback { get; private set; }
 
-        public static SagaStep<T> Create(StepMethod<T> executeMethod, StepMethod<T> rollbackMethod)
+        public ISagaStep<T> OnExecute(Func<T, Func<T, Task>, Func<T, Exception, Task>, Task> func)
         {
-            return new SagaStep<T>(executeMethod, rollbackMethod);
+            Execute = func;
+            return this;
         }
 
-        public static SagaStep<T> Create(StepMethod<T> executeMethod)
+        public ISagaStep<T> OnRollback(Func<T, Func<T, Task>, Func<T, Exception, Task>, Task> func)
         {
-            return new SagaStep<T>(executeMethod, (ctx) => Task.FromResult(ctx));
+            Rollback = func;
+            return this;
         }
     }
 }
