@@ -1,0 +1,5 @@
+version: 1.0.{build}
+
+build_script: dotnet build --configuration Release
+
+test_script: dotnet test --configuration Release --no-build --verbosity normal
