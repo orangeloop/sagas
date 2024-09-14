@@ -54,11 +54,11 @@ steps:
     versioningScheme: 'byBuildNumber'
     verbosityPack: 'Normal'
 
-- task: DotNetCoreCLI@2
+- task: NuGetCommand@2
   displayName: Publish Packages
   condition: and(succeeded(), eq(variables.isMaster, 'true'))
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'jls-nuget'
