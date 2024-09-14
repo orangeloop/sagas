@@ -1,6 +1,6 @@
 # OrangeLoop.Sagas
 
-[![Build status](https://ci.appveyor.com/api/projects/status/grdd4aj2ietavmr1?svg=true)](https://ci.appveyor.com/project/LiveFree/sagas)
+[![Build Status](https://dev.azure.com/livefree/engineering/_apis/build/status%2FOrangeloop%2FOrangeloop.Sagas?branchName=develop)](https://dev.azure.com/livefree/engineering/_build/latest?definitionId=128&branchName=develop)
 
 > [!WARNING]
 > Version 2 of this package is a complete refactor and is **NOT** backwards compatible.
