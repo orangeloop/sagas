@@ -1,0 +1,64 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+trigger:
+  - master
+  - develop
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  skipTests: 'false'
+  major: 2
+  minor: 0
+
+name: $(major).$(minor)$(Rev:.r)
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Restore Packages
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    vstsFeed: 'bc02387a-9aec-43b7-91fc-679a31b28fab'
+
+- task: DotNetCoreCLI@2
+  displayName: Build Solution
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Execute Tests
+  condition: ne(variables.skipTests, 'true')
+  inputs:
+    command: 'test'
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+    nobuild: true
+
+- task: DotNetCoreCLI@2
+  displayName: Create Packages
+  condition: and(succeeded(), eq(variables.isMaster, 'true'))
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    includeSymbols: false
+    versioningScheme: 'byBuildNumber'
+    verbosityPack: 'Normal'
+
+- task: DotNetCoreCLI@2
+  displayName: Publish Packages
+  condition: and(succeeded(), eq(variables.isMaster, 'true'))
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishVstsFeed: 'jls-nuget'
