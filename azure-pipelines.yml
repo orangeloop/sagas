@@ -61,4 +61,4 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     nuGetFeedType: 'external'
-    publishVstsFeed: 'jls-nuget'
+    publishFeedCredentials: 'jls-nuget'
