@@ -4,7 +4,7 @@
 
 > [!WARNING]
 > Version 2 of this package is a complete refactor and is **NOT** backwards compatible.
-> This version targets **net80** and has a much easier interface to work with than
+> This version targets **net8.0** and has a much easier interface to work with than
 > version 1.
 
 ## Installation
