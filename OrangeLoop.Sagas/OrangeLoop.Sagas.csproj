@@ -1,32 +1,52 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Authors>Jared L. Stark</Authors>
-    <Company>Orange Loop, LLC</Company>
-    <Copyright>Copyright © 2024 Orange Loop, LLC</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/orangeloop/sagas/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/orangeloop/sagas</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/orangeloop/sagas</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>C#, ASP.NET Core, .NET Core, Sagas, Microservices, UnitOfWork, Unit of Work, dotnet, dotnetcore</PackageTags>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Description>.NET implementation of the UnitOfWork pattern using IDbTransaction and Sagas for orchestrating cross-domain transactions.</Description>
-    <Version>2.0.0</Version>
-    <PackageIconUrl>https://raw.githubusercontent.com/orangeloop/sagas/master/logo512x512.png</PackageIconUrl>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Authors>Jared L. Stark</Authors>
+		<Company>Orange Loop, LLC</Company>
+		<Copyright>Copyright © 2024 Orange Loop, LLC</Copyright>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/orangeloop/sagas/master/LICENSE</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/orangeloop/sagas</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/orangeloop/sagas</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>C#, ASP.NET Core, .NET Core, Sagas, Microservices, UnitOfWork, Unit of Work, dotnet, dotnetcore</PackageTags>
+		<NeutralLanguage>en</NeutralLanguage>
+		<Description>.NET implementation of the UnitOfWork pattern using IDbTransaction and Sagas for orchestrating cross-domain transactions.</Description>
+		<Version>2.0.0</Version>
+		<PackageIconUrl>https://raw.githubusercontent.com/orangeloop/sagas/master/logo512x512.png</PackageIconUrl>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OrangeLoop.Sagas.Interfaces\OrangeLoop.Sagas.Interfaces.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\OrangeLoop.Sagas.Interfaces\OrangeLoop.Sagas.Interfaces.csproj" PrivateAssets="All" />
+		<ProjectReference Include="..\OrangeLoop.Sagas.UnitOfWork.SqlServer\OrangeLoop.Sagas.UnitOfWork.SqlServer.csproj" PrivateAssets="All" />
+		<ProjectReference Include="..\OrangeLoop.Sagas.UnitOfWork\OrangeLoop.Sagas.UnitOfWork.csproj" PrivateAssets="All" />
+	</ItemGroup>
 
+	<PropertyGroup>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+	</PropertyGroup>
+
+	<Target Name="CopyProjectReferencesToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+		<ItemGroup>
+			<!-- Filter out unnecessary files -->
+			<_ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('PrivateAssets', 'All'))"/>
+		</ItemGroup>
+
+		<!-- Print batches for debug purposes -->
+		<Message Text="Batch for .nupkg: ReferenceCopyLocalPaths = @(_ReferenceCopyLocalPaths), ReferenceCopyLocalPaths.DestinationSubDirectory = %(_ReferenceCopyLocalPaths.DestinationSubDirectory) Filename = %(_ReferenceCopyLocalPaths.Filename) Extension = %(_ReferenceCopyLocalPaths.Extension)" Importance="High" Condition="'@(_ReferenceCopyLocalPaths)' != ''" />
+
+		<ItemGroup>
+			<!-- Add file to package with consideration of sub folder. If empty, the root folder is chosen. -->
+			<BuildOutputInPackage Include="@(_ReferenceCopyLocalPaths)" TargetPath="%(_ReferenceCopyLocalPaths.DestinationSubDirectory)"/>
+		</ItemGroup>
+	</Target>
 </Project>
