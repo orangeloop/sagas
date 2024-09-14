@@ -7,13 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrangeLoop.Sagas", "OrangeL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD1744DA-1B55-4A0E-8950-DF9AD0668DF1}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
 		logo512x512.png = logo512x512.png
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrangeLoop.Sagas.Tests", "OrangeLoop.Sagas.Tests\OrangeLoop.Sagas.Tests.csproj", "{1942FD4E-3E6B-4F7D-8FBC-1E54C4671142}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrangeLoop.Sagas.Interfaces", "OrangeLoop.Sagas.Interfaces\OrangeLoop.Sagas.Interfaces.csproj", "{8DE0953F-C3D6-4444-BFBD-AA605C50DC07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrangeLoop.Sagas.Interfaces", "OrangeLoop.Sagas.Interfaces\OrangeLoop.Sagas.Interfaces.csproj", "{8DE0953F-C3D6-4444-BFBD-AA605C50DC07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrangeLoop.Sagas.UnitOfWork", "OrangeLoop.Sagas.UnitOfWork\OrangeLoop.Sagas.UnitOfWork.csproj", "{490D3E17-1739-4202-BECA-08DBD4868085}"
 EndProject
